@@ -27,10 +27,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'django_filters',
     
     # Local apps
     'authentication.apps.AuthenticationConfig',
-  
+    'voting.apps.VotingConfig',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +69,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'blockchain'),
+        'NAME': os.getenv('DB_NAME', 'blockchain_voting'),
         'USER': os.getenv('DB_USER', 'blockchain_user'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'root'),
         'HOST': os.getenv('DB_HOST', 'localhost'),
@@ -100,15 +101,21 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': '100/day',
         'user': '1000/day'
-    }
+    },
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20
 }
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Your React frontend origin
     "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://localhost:8000",
 ]
-
 
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
@@ -134,6 +141,42 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Email (for password reset, etc.)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Change for production
 
+# Blockchain Configuration
+BLOCKCHAIN_CONFIG = {
+    # Ethereum Configuration
+    'ETHEREUM': {
+        'PROVIDER_URL': os.getenv('ETHEREUM_PROVIDER', 'http://localhost:7545'),
+        'CONTRACT_ADDRESS': os.getenv('ETH_CONTRACT_ADDRESS', '0xYourContractAddress'),
+        'CONTRACT_ABI_PATH': os.path.join(BASE_DIR, 'blockchain/contracts/VotingSystem.json'),
+        'GAS_LIMIT': 3000000,
+        'GAS_PRICE': 50,  # in gwei
+    },
+    
+    # Hyperledger Fabric Configuration
+    'HYPERLEDGER': {
+        'FABRIC_PATH': os.path.expanduser('~/hyperledger-fabric/fabric-samples'),
+        'NETWORK_PATH': os.path.expanduser('~/hyperledger-fabric/fabric-samples/test-network'),
+        'CHANNEL_NAME': 'votingchannel',
+        'CHAINCODE_NAME': 'voting',
+        'ORDERER_URL': 'http://localhost:7050',
+        'PEER_URL': 'http://localhost:7051',
+        'WSL_IP': os.getenv('WSL_IP', '172.28.112.1'),  # Get from WSL with: hostname -I
+    },
+    
+    # IPFS Configuration
+    'IPFS': {
+        'HOST': os.getenv('IPFS_HOST', '/ip4/127.0.0.1/tcp/5001'),
+        'TIMEOUT': 30,
+    },
+    
+    # Metamask Configuration
+    'METAMASK': {
+        'NETWORK_ID': 1337,  # Ganache default
+        'NETWORK_NAME': 'Ganache',
+        'RPC_URL': 'http://localhost:7545',
+    }
+}
+
 # Security (for production)
 if not DEBUG:
     SECURE_HSTS_SECONDS = 3600
@@ -142,3 +185,7 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
