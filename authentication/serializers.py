@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from .models import Election, Candidate, Vote
+
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
@@ -27,3 +29,24 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
+
+class ElectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Election
+        fields = '__all__'
+        read_only_fields = ('created_by', 'eth_contract_address', 'hlf_election_id', 'ipfs_hash')
+
+class CandidateSerializer(serializers.ModelSerializer):
+    user_email = serializers.EmailField(source='user.email', read_only=True)
+    user_name = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta:
+        model = Candidate
+        fields = '__all__'
+        read_only_fields = ('votes_received',)
+
+class VoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vote
+        fields = '__all__'
+        read_only_fields = ('voter', 'tx_hash', 'voted_at')
