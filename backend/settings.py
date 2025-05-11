@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'django_filters',
+        'drf_yasg',
     
     # Local apps
     'authentication.apps.AuthenticationConfig',

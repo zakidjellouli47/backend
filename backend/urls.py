@@ -1,17 +1,19 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from authentication.views import (
     register, 
     login, 
-    verify_auth, 
-    logout,
-    home  # We'll add this new view
+    # logout,
+    # home
 )
 
 urlpatterns = [
-    path('', home, name='home'),  # Root URL
-    path('register/', register, name='register'),
-    path('login/', login, name='login'),
-    path('verify-auth/', verify_auth, name='verify-auth'),
-    path('logout/', logout, name='logout'),
+    # path('', home, name='home'),
+    path('admin/', admin.site.urls),
+    path('api/auth/', include([
+        path('register/', register, name='register'),
+        path('login/', login, name='login'),
+        # path('logout/', logout, name='logout'),
+    ])),
+    path('api/voting/', include('voting.urls')),
 ]
