@@ -2,16 +2,20 @@ import os
 import json
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
+
 from dotenv import load_dotenv
 from typing import Optional, Dict, Any, List
 import logging
 # For Web3 v6+:
 
-from web3.middleware import geth_poa_middleware  # This WILL work with v6.15.1
 
 
 
-load_dotenv()
+try:
+    load_dotenv()
+except Exception as e:
+    print(f"Warning: Could not load .env file: {e}")
+    # Continue with defaults
 
 class EthereumHandler:
     def __init__(self):
