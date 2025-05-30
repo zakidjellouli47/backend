@@ -1,0 +1,35 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      # Mount the correct Hyperledger Fabric directories from WSL (use absolute path)
+      - /home/route/hyperledger-fabric/fabric-samples/test-network:/hyperledger
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - ipfs
+
+  db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  ipfs:
+    image: ipfs/go-ipfs:v0.23.0
+    ports:
+      - "5001:5001"
+      - "8080:8080"
+    volumes:
+      - ipfs_data:/data/ipfs
+
+volumes:
+  postgres_data:
+  ipfs_data:

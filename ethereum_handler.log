@@ -1,0 +1,12 @@
+2025-05-30 02:28:50,852 - EnhancedEthereumHandler - WARNING - Connection attempt 1 failed: Failed to connect to Ethereum node at http://host.docker.internal:7545
+2025-05-30 02:28:52,865 - EnhancedEthereumHandler - WARNING - Connection attempt 2 failed: Failed to connect to Ethereum node at http://host.docker.internal:7545
+2025-05-30 02:28:54,883 - EnhancedEthereumHandler - CRITICAL - Failed to connect after 3 attempts
+2025-05-30 02:49:41,740 - EnhancedEthereumHandler - WARNING - Connection attempt 1 failed: Failed to connect to Ethereum node at http://host.docker.internal:7545
+2025-05-30 02:49:43,772 - EnhancedEthereumHandler - WARNING - Connection attempt 2 failed: Failed to connect to Ethereum node at http://host.docker.internal:7545
+2025-05-30 02:49:45,797 - EnhancedEthereumHandler - CRITICAL - Failed to connect after 3 attempts
+2025-05-30 02:53:09,721 - EnhancedEthereumHandler - INFO - Successfully connected to Ethereum network (Chain ID: 1337)
+2025-05-30 02:53:09,799 - EnhancedEthereumHandler - INFO - Successfully loaded contract at 0x1234567890123456789012345678901234567890
+2025-05-30 14:18:35,782 - EnhancedEthereumHandler - INFO - Successfully connected to Ethereum network (Chain ID: 1337)
+2025-05-30 14:18:35,847 - EnhancedEthereumHandler - INFO - Successfully loaded contract at 0x1234567890123456789012345678901234567890
+2025-05-30 14:57:30,700 - EnhancedEthereumHandler - INFO - Successfully connected to Ethereum network (Chain ID: 1337)
+2025-05-30 14:57:30,727 - EnhancedEthereumHandler - INFO - Successfully loaded contract at 0x1234567890123456789012345678901234567890
