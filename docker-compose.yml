@@ -12,6 +12,9 @@ services:
     depends_on:
       - db
       - ipfs
+    # Add this to ensure proper network connectivity
+    networks:
+      - default
 
   db:
     image: postgres:13-alpine
@@ -21,15 +24,24 @@ services:
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - default
 
   ipfs:
-    image: ipfs/go-ipfs:v0.23.0
+    image: ipfs/go-ipfs:latest
     ports:
-      - "5001:5001"
-      - "8080:8080"
+      - "4001:4001"
+      - "5001:5001"  # This exposes IPFS API
+      - "8080:8080"  # This exposes IPFS Gateway
     volumes:
       - ipfs_data:/data/ipfs
+    networks:
+      - default
 
 volumes:
   postgres_data:
   ipfs_data:
+
+networks:
+  default:
+    driver: bridge

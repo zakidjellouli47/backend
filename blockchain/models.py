@@ -110,23 +110,26 @@ class BlockchainTransaction(models.Model):
         Returns:
             bool: True if status was updated, False otherwise
         """
-        # Implementation would depend on your blockchain handlers
-        # This is a placeholder for the logic
         try:
             if self.blockchain_type == 'ETH':
-                from blockchain import EthereumHandler
+                from .ethereum_handler import EthereumHandler
                 handler = EthereumHandler()
                 status = handler.get_transaction_status(self.tx_hash)
             else:
-                from blockchain import HyperledgerHandler
+                from .hyperledger_handler import HyperledgerHandler
                 handler = HyperledgerHandler()
                 status = handler.get_transaction_status(self.tx_hash)
             
-            if status != self.status:
+            if status and status != self.status:
                 self.update_status(status)
                 return True
             return False
         except Exception as e:
-            self.details['refresh_error'] = str(e)
+            if 'refresh_error' not in self.details:
+                self.details['refresh_error'] = []
+            self.details['refresh_error'].append({
+                'error': str(e),
+                'timestamp': timezone.now().isoformat()
+            })
             self.save()
             return False

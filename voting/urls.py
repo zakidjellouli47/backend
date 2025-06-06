@@ -1,16 +1,23 @@
+# voting/urls.py
 from django.urls import path
 from . import views
 
 app_name = 'voting'
 
 urlpatterns = [
-    # Election Management
-    path('elections/', views.create_election, name='create_election'),
+    # Election management
+    path('elections/', views.get_elections, name='get_elections'),
+    path('elections/create/', views.create_election, name='create_election'),
+    path('elections/<str:election_id>/', views.get_election_details, name='election_details'),
+    path('elections/<str:election_id>/results/', views.get_election_results, name='election_results'),
     
-    path('elections/<int:election_id>/vote/', views.cast_vote, name='cast_vote'),
-    path('elections/<int:election_id>/results/', views.election_results, name='election_results'),
-    path('elections/<int:election_id>/candidates/', views.list_candidates, name='list_candidates'),
-    path('elections/<int:election_id>/register/', views.register_candidate, name='register_candidate'),
-    # Blockchain Verification
-    path('verify/vote/<str:tx_hash>/', views.verify_vote, name='verify_vote'),
+    # Candidate management
+    path('elections/<str:election_id>/candidates/add/', views.add_candidate, name='add_candidate'),
+    
+    # Voting
+    path('elections/<str:election_id>/vote/', views.cast_vote, name='cast_vote'),
+    path('elections/<str:election_id>/vote-status/', views.check_vote_status, name='check_vote_status'),
+    
+    # Transaction tracking
+    path('transactions/<str:tx_hash>/', views.get_transaction_status, name='transaction_status'),
 ]

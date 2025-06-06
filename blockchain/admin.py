@@ -9,9 +9,8 @@ class BlockchainTransactionAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
     
     actions = ['retry_failed_transactions']
-
+    
     def retry_failed_transactions(self, request, queryset):
-        # For now, just update status to pending
         updated = queryset.filter(status='failed').update(status='pending')
         self.message_user(
             request, 

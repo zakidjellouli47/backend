@@ -28,11 +28,12 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'django_filters',
-        'drf_yasg',
+    'drf_yasg',
     
     # Local apps
     'authentication.apps.AuthenticationConfig',
     'voting.apps.VotingConfig',
+    'blockchain.apps.BlockchainConfig',  # Added blockchain app
 ]
 
 MIDDLEWARE = [
@@ -67,16 +68,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
+# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME', 'blockchain_voting'),
-        'USER': os.getenv('DB_USER', 'blockchain_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'root'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
+        'HOST': os.getenv('DB_HOST', 'db'),
         'PORT': os.getenv('DB_PORT', '5432'),
         'OPTIONS': {
-            'connect_timeout': 5,
+            'options': '-c default_transaction_isolation=serializable'
         },
     }
 }
@@ -130,7 +132,7 @@ USE_TZ = True
 # Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+ #STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Media files
 MEDIA_URL = '/media/'
@@ -141,6 +143,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email (for password reset, etc.)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Change for production
+DEFAULT_FROM_EMAIL = 'noreply@votingplatform.com'
 
 # Blockchain Configuration
 BLOCKCHAIN_CONFIG = {
@@ -166,7 +169,7 @@ BLOCKCHAIN_CONFIG = {
     
     # IPFS Configuration
     'IPFS': {
-        'HOST': os.getenv('IPFS_HOST', '/ip4/127.0.0.1/tcp/5001'),
+        'HOST': os.getenv('IPFS_HOST', '/ip4/ipfs/tcp/5001'),
         'TIMEOUT': 30,
     },
     

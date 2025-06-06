@@ -2,23 +2,28 @@ import ipfshttpclient
 import json
 import logging
 import time
+import os
 from typing import Optional, Dict, Any, Union
 from pathlib import Path
 from datetime import datetime
 
 class IPFSHandler:
-    def __init__(self, host: str = '/ip4/127.0.0.1/tcp/5001', 
+    def __init__(self, host: Optional[str] = None, 
                  timeout: int = 30, retries: int = 3, 
                  retry_delay: int = 2):
         """
         Enhanced IPFS handler with configurable connection settings
         
         Args:
-            host: IPFS API endpoint
+            host: IPFS API endpoint (if None, reads from IPFS_HOST env var)
             timeout: Operation timeout in seconds
             retries: Connection retry attempts
             retry_delay: Delay between retries in seconds
         """
+        # Use environment variable if host not provided
+        if host is None:
+            host = os.getenv('IPFS_HOST', '/ip4/ipfs/tcp/5001')
+        
         self.host = host
         self.timeout = timeout
         self.retries = retries
@@ -38,16 +43,15 @@ class IPFSHandler:
                 )
                 # Verify connection by getting node ID
                 node_id = self.client.id()['ID']
-                self.logger.info(f"Connected to IPFS node {node_id}")
+                self.logger.info(f"Connected to IPFS node {node_id} at {self.host}")
                 return
             except Exception as e:
                 self.logger.warning(f"Connection attempt {attempt}/{self.retries} failed: {str(e)}")
                 if attempt < self.retries:
                     time.sleep(self.retry_delay)
         
-        self.logger.error("All connection attempts to IPFS failed")
+        self.logger.error(f"All connection attempts to IPFS failed for host: {self.host}")
         self.client = None
-
     def _setup_logger(self) -> None:
         """Configure advanced logging"""
         self.logger = logging.getLogger('IPFSHandler')
